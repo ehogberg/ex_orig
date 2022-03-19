@@ -9,7 +9,7 @@ defmodule Orig.Originations do
   alias Orig.Originations.OriginationApp
 
   alias Orig.Events.Application;
-  alias Orig.Events.OriginationApp.{CreateOriginationApp}
+  alias Orig.Events.OriginationApp.{CreateOriginationApp, RejectOriginationApp}
 
   @doc """
   Returns the list of origination_apps.
@@ -45,10 +45,15 @@ defmodule Orig.Originations do
   """
 
   def create_origination_app(attrs \\ %{}) do
-    create = struct(CreateOriginationApp, attrs)
+    create = struct(CreateOriginationApp,
+      Map.put(attrs, :app_id, Ecto.UUID.generate()))
     Application.dispatch(create, consistency: :strong)
   end
 
+  def reject_origination_app(app_id) do
+    reject = %RejectOriginationApp{app_id: app_id}
+    Application.dispatch(reject)
+  end
   @doc """
   Updates a origination_app.
 

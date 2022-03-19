@@ -7,7 +7,7 @@ defmodule Orig.Originations.OriginationApp do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Orig.Events.OriginationApp.{OriginationAppCreated}
+  alias Orig.Events.OriginationApp.{OriginationAppCreated, OriginationAppRejected}
   alias Orig.Originations.OriginationApp.AppStatus
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -26,6 +26,9 @@ defmodule Orig.Originations.OriginationApp do
     |> validate_required([:app_id, :ssn])
   end
 
+  def reject_origination_app_changeset(origination_app) do
+    change(origination_app, %{app_status: "rejected"})
+  end
 
   # Event execution and application
 
@@ -33,6 +36,12 @@ defmodule Orig.Originations.OriginationApp do
     %__MODULE__{orig_app |
       app_id: create.app_id,
       ssn: create.ssn
+    }
+  end
+
+  def apply(%__MODULE__{} = orig_app, %OriginationAppRejected{}) do
+    %__MODULE__{orig_app |
+      app_status: "rejected"
     }
   end
 end
