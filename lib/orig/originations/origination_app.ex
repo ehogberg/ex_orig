@@ -1,15 +1,21 @@
+import EctoEnum
+defenum Orig.Originations.OriginationApp.AppStatus, :app_status,
+  [:new, :active, :accepted, :rejected, :expired]
+
+
 defmodule Orig.Originations.OriginationApp do
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Orig.Events.OriginationApp.{OriginationAppCreated}
+  alias Orig.Originations.OriginationApp.AppStatus
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "origination_apps" do
     field :app_id, Ecto.UUID
     field :ssn, :string
-
+    field :app_status, AppStatus
     timestamps(type: :naive_datetime_usec)
   end
 
@@ -30,7 +36,3 @@ defmodule Orig.Originations.OriginationApp do
     }
   end
 end
-
-import EctoEnum
-defenum Orig.Originations.OriginationApp.AppStatus, :app_status,
-  [:new, :active, :accepted, :rejected, :expired]
