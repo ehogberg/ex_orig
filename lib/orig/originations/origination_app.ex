@@ -2,7 +2,7 @@ defmodule Orig.Originations.OriginationApp do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Orig.Events.OriginationApp.{CreateOriginationApp, OriginationAppCreated}
+  alias Orig.Events.OriginationApp.{OriginationAppCreated}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -22,9 +22,6 @@ defmodule Orig.Originations.OriginationApp do
 
 
   # Event execution and application
-  def execute(%__MODULE__{}, %CreateOriginationApp{} = create) do
-    %OriginationAppCreated{app_id: create.app_id, ssn: create.ssn}
-  end
 
   def apply(%__MODULE__{} = orig_app, %OriginationAppCreated{} = create) do
     %__MODULE__{orig_app |
