@@ -52,6 +52,7 @@ defmodule Orig.MixProject do
       {:commanded, "~> 1.3"},
       {:commanded_eventstore_adapter, "~> 1.2"},
       {:commanded_ecto_projections, "~> 1.2"},
+      {:ecto_enum, "~> 1.4"},
     ]
   end
 

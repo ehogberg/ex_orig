@@ -30,3 +30,7 @@ defmodule Orig.Originations.OriginationApp do
     }
   end
 end
+
+import EctoEnum
+defenum Orig.Originations.OriginationApp.AppStatus, :app_status,
+  [:new, :active, :accepted, :rejected, :expired]
