@@ -1,6 +1,7 @@
 defmodule Orig.Events.EventsSupervisor do
   use Supervisor
 
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
@@ -8,7 +9,8 @@ defmodule Orig.Events.EventsSupervisor do
 
   def init(_arg) do
     children = [
-      Orig.Events.OrigApplication
+      Orig.Events.Application,
+      Orig.Events.OriginationApp.OriginationAppProjector,
     ]
     Supervisor.init(children, strategy: :one_for_one)
   end
