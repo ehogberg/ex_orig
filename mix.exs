@@ -53,6 +53,8 @@ defmodule Orig.MixProject do
       {:commanded_eventstore_adapter, "~> 1.2"},
       {:commanded_ecto_projections, "~> 1.2"},
       {:ecto_enum, "~> 1.4"},
+      {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
+      {:ecto_psql_extras, "~> 0.6"},
     ]
   end
 
@@ -70,7 +72,7 @@ defmodule Orig.MixProject do
       "event_store.reset": ["event_store.drop", "event_store.create", "event_store.init"],
       "db.reset": ["event_store.reset","ecto.reset"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["tailwind default --minify","esbuild default --minify", "phx.digest"]
     ]
   end
 end

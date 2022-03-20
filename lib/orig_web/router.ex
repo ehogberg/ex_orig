@@ -38,7 +38,7 @@ defmodule OrigWeb.Router do
     scope "/" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: OrigWeb.Telemetry
+      live_dashboard "/dashboard", metrics: OrigWeb.Telemetry, ecto_repos: [Orig.Repo]
     end
   end
 
