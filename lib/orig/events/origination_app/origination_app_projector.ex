@@ -2,7 +2,8 @@ defmodule Orig.Events.OriginationApp.OriginationAppProjector do
   use Commanded.Projections.Ecto,
   application: Orig.Events.Application,
   repo:  Orig.Repo,
-  name: "origination_app_projection"
+  name: "origination_app_projection",
+  consistency: :strong
 
   alias Orig.Events.OriginationApp.{OriginationAppCreated, OriginationAppRejected}
   alias Orig.Originations.OriginationApp

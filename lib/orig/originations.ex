@@ -1,4 +1,6 @@
 defmodule Orig.Originations do
+  require Logger
+
   @moduledoc """
   The Originations context.
   """
@@ -45,15 +47,23 @@ defmodule Orig.Originations do
   """
 
   def create_origination_app(attrs \\ %{}) do
-    create = struct(CreateOriginationApp,
-      Map.put(attrs, :app_id, Ecto.UUID.generate()))
+    app_id = Ecto.UUID.generate()
+
+    create = CreateOriginationApp
+    |> struct(attrs)
+    |> Map.put(:app_id, app_id)
+
     Application.dispatch(create, consistency: :strong)
+    new_orig_app = Repo.get_by(OriginationApp, app_id: app_id)
+    Logger.debug("New orig app: #{inspect(new_orig_app)}")
+    new_orig_app
   end
 
   def reject_origination_app(app_id) do
     reject = %RejectOriginationApp{app_id: app_id}
     Application.dispatch(reject)
   end
+
   @doc """
   Updates a origination_app.
 
