@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "doiken.quick-searcher",
+        "jakebecker.elixir-ls",
+        "phoenixframework.phoenix"
+    ]
+}

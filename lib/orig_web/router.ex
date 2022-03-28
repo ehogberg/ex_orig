@@ -18,6 +18,9 @@ defmodule OrigWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    live "/apply", ApplyLive
+    live "/apply/:app_id/applicant", ApplicationFlowLive, :applicant_profile
   end
 
   # Other scopes may use custom stacks.

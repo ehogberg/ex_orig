@@ -1,5 +1,6 @@
 defmodule Orig.OriginationsTest do
   use Orig.DataCase
+  use Orig.InMemoryEventStoreCase
 
   alias Orig.Originations
 
@@ -15,42 +16,69 @@ defmodule Orig.OriginationsTest do
       assert Originations.list_origination_apps() == [origination_app]
     end
 
-    test "get_origination_app!/1 returns the origination_app with given id" do
+    test "get_origination_app_by_applicant_id/1 returns a origination app" do
       origination_app = origination_app_fixture()
-      assert Originations.get_origination_app!(origination_app.id) == origination_app
+      assert Originations.get_origination_app_by_applicant_id(origination_app.ssn) ==
+        origination_app
     end
 
-    test "create_origination_app/1 with valid data creates a origination_app" do
-      valid_attrs = %{app_id: "7488a646-e31f-11e4-aace-600308960662", ssn: "some ssn"}
+    test "get_origination_app_by_applicant_id/1 returns nil if no match" do
+      assert Originations.get_origination_app_by_applicant_id("0") == nil
+    end
+
+    test "create_origination_app/1 with valid data creates a new origination_app" do
+      valid_attrs = %{app_id: "7488a646-e31f-11e4-aace-600308960662", ssn: "111223333"}
 
       assert {:ok, %OriginationApp{} = origination_app} = Originations.create_origination_app(valid_attrs)
       assert origination_app.app_id == "7488a646-e31f-11e4-aace-600308960662"
-      assert origination_app.ssn == "some ssn"
+      assert origination_app.ssn == "111223333"
+      assert origination_app.app_status == :new
+    end
+
+    test "create_origination_app/1 returns error when trying to re-create an existing app" do
+      origination_app = origination_app_fixture()
+      assert {:error, :orig_app_already_exists} =
+        Originations.create_origination_app(%{app_id: origination_app.app_id, ssn: "333445555"})
     end
 
     test "create_origination_app/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Originations.create_origination_app(@invalid_attrs)
     end
 
-    test "update_origination_app/2 with valid data updates the origination_app" do
+    test "find_or_create_origination_app/1 returns an active application, if one exists" do
       origination_app = origination_app_fixture()
-      update_attrs = %{app_id: "7488a646-e31f-11e4-aace-600308960668", ssn: "some updated ssn"}
 
-      assert {:ok, %OriginationApp{} = origination_app} = Originations.update_origination_app(origination_app, update_attrs)
-      assert origination_app.app_id == "7488a646-e31f-11e4-aace-600308960668"
-      assert origination_app.ssn == "some updated ssn"
+      assert origination_app == Originations.find_or_create_origination_app("111223333")
     end
 
-    test "update_origination_app/2 with invalid data returns error changeset" do
-      origination_app = origination_app_fixture()
-      assert {:error, %Ecto.Changeset{}} = Originations.update_origination_app(origination_app, @invalid_attrs)
-      assert origination_app == Originations.get_origination_app!(origination_app.id)
+    test "find_or_create_origination_app/1 creates a new application if
+          there is no existing one matching applicant id" do
+      origination_app_fixture()
+      assert Originations.find_or_create_origination_app("222334444")
+      assert Enum.count(Originations.list_origination_apps()) == 2
     end
 
-    test "delete_origination_app/1 deletes the origination_app" do
+    test "reject_origination_app/1 rejects an active origination app" do
       origination_app = origination_app_fixture()
-      assert {:ok, %OriginationApp{}} = Originations.delete_origination_app(origination_app)
-      assert_raise Ecto.NoResultsError, fn -> Originations.get_origination_app!(origination_app.id) end
+      Originations.reject_origination_app(origination_app.app_id)
+
+      rejected_origination_app =
+        Originations.find_origination_app_by_app_id(origination_app.app_id)
+
+      assert rejected_origination_app.app_status == :rejected
+    end
+
+    test "reject_origination_app/1 errs if no such app exists" do
+      assert {:error, :no_origination_app_found_to_reject} ==
+        Originations.reject_origination_app("99999")
+    end
+
+    test "reject_origination_app/1 errs if app already rejected" do
+      origination_app = origination_app_fixture()
+      Originations.reject_origination_app(origination_app.app_id)
+
+      assert {:error, :orig_app_already_rejected} ==
+        Originations.reject_origination_app(origination_app.app_id)
     end
 
     test "change_origination_app/1 returns a origination_app changeset" do

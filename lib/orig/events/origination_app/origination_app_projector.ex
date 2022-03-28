@@ -7,7 +7,7 @@ defmodule Orig.Events.OriginationApp.OriginationAppProjector do
 
   alias Orig.Events.OriginationApp.{OriginationAppCreated, OriginationAppRejected}
   alias Orig.Originations.OriginationApp
-  alias Ecto.{Multi}
+  alias Ecto.Multi
   alias Orig.Repo
 
   project %OriginationAppCreated{} = create, fn multi ->
@@ -16,7 +16,6 @@ defmodule Orig.Events.OriginationApp.OriginationAppProjector do
   end
 
   project %OriginationAppRejected{app_id: app_id} , fn multi ->
-
     cs = OriginationApp
     |> Repo.get_by(app_id: app_id)
     |> OriginationApp.reject_origination_app_changeset()

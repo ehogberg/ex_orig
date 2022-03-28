@@ -5,16 +5,23 @@ config :orig, Orig.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "orig_read_dev",
+  database: "orig_dev",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
 # Configure CQRS event storage
+config :orig, Orig.Events.Application,
+  event_store: [
+    adapter: Commanded.EventStore.Adapters.EventStore,
+    event_store: Orig.Events.EventStore,
+    serializer: Commanded.Serialization.JsonSerializer
+  ]
+
 config :orig, Orig.Events.EventStore,
   serializer: Commanded.Serialization.JsonSerializer,
   username: "postgres",
   password: "postgres",
-  database: "orig_events_dev",
+  database: "orig_dev",
   hostname: "localhost",
   pool_size: 10
 

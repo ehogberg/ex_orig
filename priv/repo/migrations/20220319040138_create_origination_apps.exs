@@ -9,5 +9,7 @@ defmodule Orig.Repo.Migrations.CreateOriginationApps do
 
       timestamps(type: :naive_datetime_usec)
     end
+
+    create unique_index(:origination_apps, [:app_id])
   end
 end

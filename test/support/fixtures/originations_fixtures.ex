@@ -12,7 +12,7 @@ defmodule Orig.OriginationsFixtures do
       attrs
       |> Enum.into(%{
         app_id: "7488a646-e31f-11e4-aace-600308960662",
-        ssn: "some ssn"
+        ssn: "111223333"
       })
       |> Orig.Originations.create_origination_app()
 

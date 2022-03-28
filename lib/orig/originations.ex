@@ -5,109 +5,135 @@ defmodule Orig.Originations do
   The Originations context.
   """
 
-  import Ecto.Query, warn: false
-    alias Orig.Repo
+  alias Orig.Repo
+  alias Orig.Originations.{OriginationApp, ApplicantProfile}
+  alias Orig.Events.OriginationApp.{RejectOriginationApp}
 
-  alias Orig.Originations.OriginationApp
-
-  alias Orig.Events.Application;
-  alias Orig.Events.OriginationApp.{CreateOriginationApp, RejectOriginationApp}
 
   @doc """
   Returns the list of origination_apps.
-
-  ## Examples
-
-      iex> list_origination_apps()
-      [%OriginationApp{}, ...]
-
   """
   def list_origination_apps do
     Repo.all(OriginationApp)
   end
 
-  @doc """
-  Gets a single origination_app.
-
-  Raises `Ecto.NoResultsError` if the Origination app does not exist.
-
-  ## Examples
-
-      iex> get_origination_app!(123)
-      %OriginationApp{}
-
-      iex> get_origination_app!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_origination_app!(id), do: Repo.get!(OriginationApp, id)
+  def get_origination_app_by_applicant_id(applicant_id),
+    do: Repo.get_by(OriginationApp, ssn: applicant_id)
 
   @doc """
-  Creates a origination_app.
+  Creates a origination_app.  An applicant identifier (ssn)
+  must be supplied as part of the call.  An origination
+  application ID (UUID) may be supplied as part of the
+  call; if not supplied, one will be automatically
+  generated.
   """
+  def create_origination_app(%{ssn: _ssn} = attrs) do
 
-  def create_origination_app(attrs \\ %{}) do
-    app_id = Ecto.UUID.generate()
+    # Make sure there's an app id, but don't overwrite
+    # one if its already provided.
+    attrs = Map.merge(%{app_id: Ecto.UUID.generate()}, attrs)
 
-    create = CreateOriginationApp
-    |> struct(attrs)
-    |> Map.put(:app_id, app_id)
-
-    Application.dispatch(create, consistency: :strong)
-    new_orig_app = Repo.get_by(OriginationApp, app_id: app_id)
-    Logger.debug("New orig app: #{inspect(new_orig_app)}")
-    new_orig_app
+    with  {:ok, %{app_id: app_id}} <-
+            OriginationApp.validate_origination_app(%OriginationApp{}, attrs),
+          :ok <- OriginationApp.dispatch_create_origination_app(attrs),
+          new_orig_app <- Repo.get_by(OriginationApp, app_id: app_id) do
+      {:ok, new_orig_app}
+    else
+      {:error, _term} = err -> err
+    end
   end
 
+  @doc """
+  Given the app ID of an origination application, finds the application in
+  the read projection, assuming one exists.   If no matching application
+  exists, returns nil
+  """
+  def find_origination_app_by_app_id(app_id) do
+    Repo.get_by(OriginationApp, app_id: app_id)
+  end
+
+  @doc """
+  Given an applicant_id, attempts to find an existing, active
+  application associatd with the applicant.   If one is found,
+  it is returned.  If none is found, creates a new orig application
+  for the applicant and returns it.
+  """
+  def find_or_create_origination_app(applicant_id) do
+    existing_app = get_origination_app_by_applicant_id(applicant_id)
+
+    if !existing_app do
+      create_origination_app(%{ssn: applicant_id})
+    else
+      existing_app
+    end
+  end
+
+  @doc """
+  Given an app ID, marks an origination application as rejected,
+  assuming one exists.  If no app exists or the app has
+  previously been rejected, returns an {:error, err_term}
+  tuple indicating the error condition.
+  """
   def reject_origination_app(app_id) do
-    reject = %RejectOriginationApp{app_id: app_id}
-    Application.dispatch(reject)
+    reject = RejectOriginationApp.new(app_id)
+    Orig.Events.Application.dispatch(reject, consistency: :strong)
   end
 
-  @doc """
-  Updates a origination_app.
-
-  ## Examples
-
-      iex> update_origination_app(origination_app, %{field: new_value})
-      {:ok, %OriginationApp{}}
-
-      iex> update_origination_app(origination_app, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_origination_app(%OriginationApp{} = origination_app, attrs) do
-    origination_app
-    |> OriginationApp.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a origination_app.
-
-  ## Examples
-
-      iex> delete_origination_app(origination_app)
-      {:ok, %OriginationApp{}}
-
-      iex> delete_origination_app(origination_app)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_origination_app(%OriginationApp{} = origination_app) do
-    Repo.delete(origination_app)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking origination_app changes.
-
-  ## Examples
-
-      iex> change_origination_app(origination_app)
-      %Ecto.Changeset{data: %OriginationApp{}}
-
-  """
   def change_origination_app(%OriginationApp{} = origination_app, attrs \\ %{}) do
     OriginationApp.changeset(origination_app, attrs)
+  end
+
+
+  #### Applicant Profile
+
+  @doc """
+  Returns the list of applicant profiles.
+  """
+  def list_applicant_profiles() do
+    Repo.all(ApplicantProfile)
+  end
+
+  @doc """
+  Given an application ID, find the applicant profile record associated with it.
+  If no such profile exists, return nil.
+  """
+  def find_applicant_profile_by_app_id(app_id) do
+    Repo.get_by(ApplicantProfile, app_id: app_id)
+  end
+
+  @doc """
+  Creates a applicant profile.  The application id to create the profile for must
+  be included within the supplied attrs, using key `app_id`.  Returns either the
+  newly created applicant profile, or an {:error, error_term} tuple if the supplied
+  attr map is invalid or if a applicant profile already exists for the specified id.
+  """
+  def create_applicant_profile(attrs) do
+    persist_applicant_profile(%ApplicantProfile{}, attrs, "create")
+  end
+
+  @doc """
+  Updates an existing appliant profile.  Behaves similarly to create_applicant_profile,
+  including required app_id and success/error semantics.
+  """
+  def update_applicant_profile(%ApplicantProfile{} = app_profile, attrs) do
+    persist_applicant_profile(app_profile, attrs, "update")
+  end
+
+  defp persist_applicant_profile(%ApplicantProfile{} = app_profile,
+    %{app_id: app_id} = attrs, persistence) do
+    with  {:ok, %ApplicantProfile{}} <-
+            ApplicantProfile.validate_app_profile(app_profile, attrs),
+          :ok <-
+            ApplicantProfile.dispatch_applicant_profile_persistence(attrs, persistence),
+          ap <- find_applicant_profile_by_app_id(app_id)
+    do
+          {:ok, ap}
+    else
+      {:error, _term} = err -> err
+    end
+  end
+
+  def change_applicant_profile(%ApplicantProfile{} = applicant_profile, attrs \\ %{}) do
+    ApplicantProfile.changeset(applicant_profile, attrs)
   end
 end
