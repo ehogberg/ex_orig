@@ -54,7 +54,7 @@ defmodule Orig.OriginationsTest do
     test "find_or_create_origination_app/1 creates a new application if
           there is no existing one matching applicant id" do
       origination_app_fixture()
-      assert Originations.find_or_create_origination_app("222334444")
+      assert %OriginationApp{} = Originations.find_or_create_origination_app("222334444")
       assert Enum.count(Originations.list_origination_apps()) == 2
     end
 

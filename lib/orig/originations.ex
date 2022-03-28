@@ -62,7 +62,9 @@ defmodule Orig.Originations do
     existing_app = get_origination_app_by_applicant_id(applicant_id)
 
     if !existing_app do
-      create_origination_app(%{ssn: applicant_id})
+      %{ssn: applicant_id}
+      |> create_origination_app()
+      |> elem(1)
     else
       existing_app
     end

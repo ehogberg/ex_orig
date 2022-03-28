@@ -1,6 +1,7 @@
 defmodule OrigWeb.ApplyLive do
   use OrigWeb, :live_view
   alias Orig.Originations
+  alias Orig.Originations.OriginationApp
 
   @impl true
   def mount(_params, _sess, socket) do
@@ -53,18 +54,19 @@ defmodule OrigWeb.ApplyLive do
 
   @impl true
   def handle_event("lookup-app", %{"lookup" => lookup}, socket) do
-    cs = changeset(lookup)
-    IO.inspect(cs)
 
-    case Ecto.Changeset.apply_action(cs, :lookup) do
-      {:ok, %{ssn: ssn}} ->
-        %{app_id: app_id} = Originations.find_or_create_origination_app(ssn)
-        {:noreply,
-          socket
-          |> push_redirect(
-            to: Routes.application_flow_path(socket,:applicant_profile, app_id))}
-      {:error, cs} -> {:noreply, assign(socket, :changeset, cs)}
+    with {:ok, %{ssn: ssn}} <-
+            lookup
+            |> changeset()
+            |> Ecto.Changeset.apply_action(:validate),
+          %OriginationApp{app_id: app_id} <-
+            Originations.find_or_create_origination_app(ssn) do
+      {:noreply, push_redirect(socket,
+        to: Routes.application_flow_path(socket,
+          :applicant_profile, app_id))}
+    else
+      {:error, %Ecto.Changeset{} = cs} ->
+        {:noreply, assign(socket, :changeset, cs)}
     end
-
   end
 end
