@@ -4,8 +4,8 @@ defmodule OrigWeb.ApplicationFlowLive do
   @impl true
   def mount(params, _sess, socket) do
     {:ok,
-      socket
-      |> assign_application_id(params["app_id"])}
+     socket
+     |> assign_application_id(params["app_id"])}
   end
 
   defp assign_application_id(socket, app_id) do

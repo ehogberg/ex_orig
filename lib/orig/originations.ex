@@ -9,7 +9,6 @@ defmodule Orig.Originations do
   alias Orig.Originations.{OriginationApp, ApplicantProfile}
   alias Orig.Events.OriginationApp.{RejectOriginationApp}
 
-
   @doc """
   Returns the list of origination_apps.
   """
@@ -28,15 +27,14 @@ defmodule Orig.Originations do
   generated.
   """
   def create_origination_app(%{ssn: _ssn} = attrs) do
-
     # Make sure there's an app id, but don't overwrite
     # one if its already provided.
     attrs = Map.merge(%{app_id: Ecto.UUID.generate()}, attrs)
 
-    with  {:ok, %{app_id: app_id}} <-
-            OriginationApp.validate_origination_app(%OriginationApp{}, attrs),
-          :ok <- OriginationApp.dispatch_create_origination_app(attrs),
-          new_orig_app <- Repo.get_by(OriginationApp, app_id: app_id) do
+    with {:ok, %{app_id: app_id}} <-
+           OriginationApp.validate_origination_app(%OriginationApp{}, attrs),
+         :ok <- OriginationApp.dispatch_create_origination_app(attrs),
+         new_orig_app <- Repo.get_by(OriginationApp, app_id: app_id) do
       {:ok, new_orig_app}
     else
       {:error, _term} = err -> err
@@ -85,7 +83,6 @@ defmodule Orig.Originations do
     OriginationApp.changeset(origination_app, attrs)
   end
 
-
   #### Applicant Profile
 
   @doc """
@@ -121,15 +118,17 @@ defmodule Orig.Originations do
     persist_applicant_profile(app_profile, attrs, "update")
   end
 
-  defp persist_applicant_profile(%ApplicantProfile{} = app_profile,
-    %{app_id: app_id} = attrs, persistence) do
-    with  {:ok, %ApplicantProfile{}} <-
-            ApplicantProfile.validate_app_profile(app_profile, attrs),
-          :ok <-
-            ApplicantProfile.dispatch_applicant_profile_persistence(attrs, persistence),
-          ap <- find_applicant_profile_by_app_id(app_id)
-    do
-          {:ok, ap}
+  defp persist_applicant_profile(
+         %ApplicantProfile{} = app_profile,
+         %{app_id: app_id} = attrs,
+         persistence
+       ) do
+    with {:ok, %ApplicantProfile{}} <-
+           ApplicantProfile.validate_app_profile(app_profile, attrs),
+         :ok <-
+           ApplicantProfile.dispatch_applicant_profile_persistence(attrs, persistence),
+         ap <- find_applicant_profile_by_app_id(app_id) do
+      {:ok, ap}
     else
       {:error, _term} = err -> err
     end

@@ -10,13 +10,26 @@ defmodule Orig.ApplicantProfileTest do
     import Orig.ApplicantProfilesFixtures
     import Orig.OriginationsFixtures
 
-    @valid_attrs %{app_id: "7488a646-e31f-11e4-aace-600308960662",
-    first_name: "Betty", last_name: "Borrower",
-    address1: "99 Bank St.", address2: "Apt. B", city: "Brainerd",
-    state: "MN", postcode: "22334"}
+    @valid_attrs %{
+      app_id: "7488a646-e31f-11e4-aace-600308960662",
+      first_name: "Betty",
+      last_name: "Borrower",
+      address1: "99 Bank St.",
+      address2: "Apt. B",
+      city: "Brainerd",
+      state: "MN",
+      postcode: "22334"
+    }
 
-    @invalid_attrs %{app_id: nil, first_name: nil, last_name: nil,
-      address1: nil, city: nil, state: nil, postcode: nil}
+    @invalid_attrs %{
+      app_id: nil,
+      first_name: nil,
+      last_name: nil,
+      address1: nil,
+      city: nil,
+      state: nil,
+      postcode: nil
+    }
 
     test "list_applicant_profiles/0 returns all applicant profiles" do
       applicant_profile = applicant_profile_fixture()
@@ -28,7 +41,7 @@ defmodule Orig.ApplicantProfileTest do
       applicant_profile = applicant_profile_fixture()
 
       assert Originations.find_applicant_profile_by_app_id(applicant_profile.app_id) ==
-        applicant_profile
+               applicant_profile
     end
 
     test "find_applicant_profile_by_app_id/1 returns nil when no profile exists" do
@@ -39,7 +52,7 @@ defmodule Orig.ApplicantProfileTest do
       origination_app = origination_app_fixture()
 
       assert {:ok, %ApplicantProfile{} = app_prof} =
-        Originations.create_applicant_profile(@valid_attrs)
+               Originations.create_applicant_profile(@valid_attrs)
 
       assert app_prof.app_id == origination_app.app_id
       assert app_prof.first_name == "Betty"
@@ -49,32 +62,31 @@ defmodule Orig.ApplicantProfileTest do
       assert app_prof.city == "Brainerd"
       assert app_prof.state == "MN"
       assert app_prof.postcode == "22334"
-
     end
 
     test "create_applicant_profile/1 errs when given invalid attrs" do
-      assert {:error, %Ecto.Changeset{}} =
-        Originations.create_applicant_profile(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Originations.create_applicant_profile(@invalid_attrs)
     end
 
     test "create_applicant_profile/1 errs when trying to create an existing profile" do
       _applicant_profile = applicant_profile_fixture()
 
       assert {:error, :applicant_profile_exists} ==
-        Originations.create_applicant_profile(@valid_attrs)
+               Originations.create_applicant_profile(@valid_attrs)
     end
 
     test "update_applicant_profile/1 updates an existing applicant profile" do
       applicant_profile = applicant_profile_fixture()
 
-      assert {:ok, upd_app_prof} = Originations.update_applicant_profile(applicant_profile, @valid_attrs)
+      assert {:ok, upd_app_prof} =
+               Originations.update_applicant_profile(applicant_profile, @valid_attrs)
 
       assert upd_app_prof.first_name == "Betty"
     end
 
     test "update_applicant_profile/1 errs when updating a non-existent app prof" do
       assert {:error, :applicant_profile_not_found} =
-        Originations.update_applicant_profile(%ApplicantProfile{}, @valid_attrs)
+               Originations.update_applicant_profile(%ApplicantProfile{}, @valid_attrs)
     end
 
     test "change_application_profile/1 returns an app prof changeset" do

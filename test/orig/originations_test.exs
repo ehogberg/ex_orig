@@ -18,8 +18,9 @@ defmodule Orig.OriginationsTest do
 
     test "get_origination_app_by_applicant_id/1 returns a origination app" do
       origination_app = origination_app_fixture()
+
       assert Originations.get_origination_app_by_applicant_id(origination_app.ssn) ==
-        origination_app
+               origination_app
     end
 
     test "get_origination_app_by_applicant_id/1 returns nil if no match" do
@@ -29,7 +30,9 @@ defmodule Orig.OriginationsTest do
     test "create_origination_app/1 with valid data creates a new origination_app" do
       valid_attrs = %{app_id: "7488a646-e31f-11e4-aace-600308960662", ssn: "111223333"}
 
-      assert {:ok, %OriginationApp{} = origination_app} = Originations.create_origination_app(valid_attrs)
+      assert {:ok, %OriginationApp{} = origination_app} =
+               Originations.create_origination_app(valid_attrs)
+
       assert origination_app.app_id == "7488a646-e31f-11e4-aace-600308960662"
       assert origination_app.ssn == "111223333"
       assert origination_app.app_status == :new
@@ -37,8 +40,12 @@ defmodule Orig.OriginationsTest do
 
     test "create_origination_app/1 returns error when trying to re-create an existing app" do
       origination_app = origination_app_fixture()
+
       assert {:error, :orig_app_already_exists} =
-        Originations.create_origination_app(%{app_id: origination_app.app_id, ssn: "333445555"})
+               Originations.create_origination_app(%{
+                 app_id: origination_app.app_id,
+                 ssn: "333445555"
+               })
     end
 
     test "create_origination_app/1 with invalid data returns error changeset" do
@@ -70,7 +77,7 @@ defmodule Orig.OriginationsTest do
 
     test "reject_origination_app/1 errs if no such app exists" do
       assert {:error, :no_origination_app_found_to_reject} ==
-        Originations.reject_origination_app("99999")
+               Originations.reject_origination_app("99999")
     end
 
     test "reject_origination_app/1 errs if app already rejected" do
@@ -78,7 +85,7 @@ defmodule Orig.OriginationsTest do
       Originations.reject_origination_app(origination_app.app_id)
 
       assert {:error, :orig_app_already_rejected} ==
-        Originations.reject_origination_app(origination_app.app_id)
+               Originations.reject_origination_app(origination_app.app_id)
     end
 
     test "change_origination_app/1 returns a origination_app changeset" do

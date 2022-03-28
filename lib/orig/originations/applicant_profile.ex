@@ -5,7 +5,7 @@ defmodule Orig.Originations.ApplicantProfile do
   import Ecto.Changeset
 
   alias Orig.Originations.OriginationApp
-  alias Orig.Events.ApplicantProfile.{ChangeApplicantProfile,ApplicantProfileChanged}
+  alias Orig.Events.ApplicantProfile.{ChangeApplicantProfile, ApplicantProfileChanged}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -21,18 +21,28 @@ defmodule Orig.Originations.ApplicantProfile do
     timestamps()
 
     belongs_to :origination_app, OriginationApp,
-      foreign_key: :app_id, type: Ecto.UUID, references: :app_id
+      foreign_key: :app_id,
+      type: Ecto.UUID,
+      references: :app_id
   end
 
   @doc false
   def changeset(applicant_profile, attrs) do
     applicant_profile
-    |> cast(attrs, [:app_id, :first_name, :last_name, :address1, :address2, :city, :state, :postcode])
+    |> cast(attrs, [
+      :app_id,
+      :first_name,
+      :last_name,
+      :address1,
+      :address2,
+      :city,
+      :state,
+      :postcode
+    ])
     |> validate_required([:app_id, :first_name, :last_name, :address1, :city, :state, :postcode])
   end
 
-
-  def validate_app_profile(app_profile,attrs) do
+  def validate_app_profile(app_profile, attrs) do
     app_profile
     |> changeset(attrs)
     |> apply_action(:validate)
@@ -46,12 +56,13 @@ defmodule Orig.Originations.ApplicantProfile do
     |> Orig.Events.Application.dispatch(consistency: :strong)
   end
 
-  def apply(%__MODULE__{} = app_prof,
-   %ApplicantProfileChanged{applicant_profile: changed_prof}) do
+  def apply(
+        %__MODULE__{} = app_prof,
+        %ApplicantProfileChanged{applicant_profile: changed_prof}
+      ) do
     app_prof
     |> changeset(changed_prof)
     |> apply_changes()
     |> Map.delete(:__meta__)
   end
-
 end

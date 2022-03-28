@@ -1,7 +1,12 @@
 import EctoEnum
-defenum Orig.Originations.OriginationApp.AppStatus, :app_status,
-  [:new, :active, :accepted, :rejected, :expired]
 
+defenum(Orig.Originations.OriginationApp.AppStatus, :app_status, [
+  :new,
+  :active,
+  :accepted,
+  :rejected,
+  :expired
+])
 
 defmodule Orig.Originations.OriginationApp do
   @derive {Jason.Encoder, except: [:__meta__, :applicant_profile]}
@@ -9,7 +14,12 @@ defmodule Orig.Originations.OriginationApp do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Orig.Events.OriginationApp.{CreateOriginationApp, OriginationAppCreated, OriginationAppRejected}
+  alias Orig.Events.OriginationApp.{
+    CreateOriginationApp,
+    OriginationAppCreated,
+    OriginationAppRejected
+  }
+
   alias Orig.Originations.OriginationApp.AppStatus
   alias Orig.Originations.ApplicantProfile
 
@@ -21,8 +31,7 @@ defmodule Orig.Originations.OriginationApp do
     field :app_status, AppStatus
     timestamps(type: :naive_datetime_usec)
 
-    has_one :applicant_profile, ApplicantProfile,
-      references: :app_id, foreign_key: :app_id
+    has_one :applicant_profile, ApplicantProfile, references: :app_id, foreign_key: :app_id
   end
 
   @doc false
@@ -35,7 +44,6 @@ defmodule Orig.Originations.OriginationApp do
   def reject_origination_app_changeset(origination_app) do
     change(origination_app, %{app_status: "rejected"})
   end
-
 
   #### Event execution and application
 
@@ -52,15 +60,10 @@ defmodule Orig.Originations.OriginationApp do
   end
 
   def apply(%__MODULE__{} = orig_app, %OriginationAppCreated{} = create) do
-    %__MODULE__{orig_app |
-      app_id: create.app_id,
-      ssn: create.ssn
-    }
+    %__MODULE__{orig_app | app_id: create.app_id, ssn: create.ssn}
   end
 
   def apply(%__MODULE__{} = orig_app, %OriginationAppRejected{}) do
-    %__MODULE__{orig_app |
-      app_status: "rejected"
-    }
+    %__MODULE__{orig_app | app_status: "rejected"}
   end
 end

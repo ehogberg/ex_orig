@@ -16,7 +16,7 @@ defmodule Orig.Application do
       {Phoenix.PubSub, name: Orig.PubSub},
       # Start the Endpoint (http/https)
       OrigWeb.Endpoint,
-      Orig.Events.EventsSupervisor,
+      Orig.Events.EventsSupervisor
       # Start a worker by calling: Orig.Worker.start_link(arg)
       # {Orig.Worker, arg}
     ]

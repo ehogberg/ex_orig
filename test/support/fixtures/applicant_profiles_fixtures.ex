@@ -1,5 +1,4 @@
 defmodule Orig.ApplicantProfilesFixtures do
-
   import Orig.OriginationsFixtures
 
   def applicant_profile_fixture(attrs \\ %{}) do
@@ -20,5 +19,4 @@ defmodule Orig.ApplicantProfilesFixtures do
 
     applicant_profile
   end
-
 end

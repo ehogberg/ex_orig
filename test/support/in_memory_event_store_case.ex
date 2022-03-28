@@ -4,7 +4,7 @@ defmodule Orig.InMemoryEventStoreCase do
   setup do
     {:ok, _apps} = Application.ensure_all_started(:orig)
 
-    on_exit( fn ->
+    on_exit(fn ->
       :ok = Application.stop(:orig)
     end)
   end

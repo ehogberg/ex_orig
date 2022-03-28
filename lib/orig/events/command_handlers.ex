@@ -1,15 +1,20 @@
 defmodule Orig.Events.CommandHandlers do
   @behaviour Commanded.Commands.Handler
 
-  alias Orig.Events.OriginationApp.{CreateOriginationApp,OriginationAppCreated,
-    RejectOriginationApp, OriginationAppRejected}
+  alias Orig.Events.OriginationApp.{
+    CreateOriginationApp,
+    OriginationAppCreated,
+    RejectOriginationApp,
+    OriginationAppRejected
+  }
+
   alias Orig.Events.ApplicantProfile.{ChangeApplicantProfile, ApplicantProfileChanged}
 
   alias Orig.Originations.{OriginationApp, ApplicantProfile}
 
   #### Create origination app...
 
-  #Create only if there's no application already existing w/ the same app id.
+  # Create only if there's no application already existing w/ the same app id.
   @impl true
   def handle(%OriginationApp{app_id: nil} = _agg, %CreateOriginationApp{} = create) do
     struct(OriginationAppCreated, Map.from_struct(create))
@@ -42,8 +47,11 @@ defmodule Orig.Events.CommandHandlers do
   # create app profile if one doesn't exist for the app id.
   @impl true
   def handle(%ApplicantProfile{app_id: nil}, %ChangeApplicantProfile{persistence: "create"} = chg) do
-    %ApplicantProfileChanged{applicant_profile: chg.applicant_profile,
-      app_id: chg.app_id, persistence: chg.persistence}
+    %ApplicantProfileChanged{
+      applicant_profile: chg.applicant_profile,
+      app_id: chg.app_id,
+      persistence: chg.persistence
+    }
   end
 
   # create app profile:  base case; reject if a profile already exists
@@ -51,15 +59,18 @@ defmodule Orig.Events.CommandHandlers do
   def handle(%ApplicantProfile{}, %ChangeApplicantProfile{persistence: "create"}),
     do: {:error, :applicant_profile_exists}
 
-  #update app prof:  reject if no app prof exists
+  # update app prof:  reject if no app prof exists
   @impl true
   def handle(%ApplicantProfile{app_id: nil}, %ChangeApplicantProfile{persistence: "update"}),
     do: {:error, :applicant_profile_not_found}
 
-  #update app prof:  update if exists
+  # update app prof:  update if exists
   @impl true
   def handle(%ApplicantProfile{}, %ChangeApplicantProfile{persistence: "update"} = chg) do
-    %ApplicantProfileChanged{applicant_profile: chg.applicant_profile,
-      app_id: chg.app_id, persistence: chg.persistence}
+    %ApplicantProfileChanged{
+      applicant_profile: chg.applicant_profile,
+      app_id: chg.app_id,
+      persistence: chg.persistence
+    }
   end
 end

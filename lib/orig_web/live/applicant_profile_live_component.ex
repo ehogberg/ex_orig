@@ -10,5 +10,4 @@ defmodule OrigWeb.ApplicantProfileLiveComponent do
     </section>
     """
   end
-
 end

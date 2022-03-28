@@ -45,25 +45,26 @@ defmodule OrigWeb.ApplyLive do
 
   @impl true
   def handle_event("validate", %{"lookup" => lookup}, socket) do
-    cs = lookup
-    |> changeset()
-    |> Map.put(:action, :validate)
+    cs =
+      lookup
+      |> changeset()
+      |> Map.put(:action, :validate)
 
-    {:noreply,assign(socket, :changeset, cs)}
+    {:noreply, assign(socket, :changeset, cs)}
   end
 
   @impl true
   def handle_event("lookup-app", %{"lookup" => lookup}, socket) do
-
     with {:ok, %{ssn: ssn}} <-
-            lookup
-            |> changeset()
-            |> Ecto.Changeset.apply_action(:validate),
-          %OriginationApp{app_id: app_id} <-
-            Originations.find_or_create_origination_app(ssn) do
-      {:noreply, push_redirect(socket,
-        to: Routes.application_flow_path(socket,
-          :applicant_profile, app_id))}
+           lookup
+           |> changeset()
+           |> Ecto.Changeset.apply_action(:validate),
+         %OriginationApp{app_id: app_id} <-
+           Originations.find_or_create_origination_app(ssn) do
+      {:noreply,
+       push_redirect(socket,
+         to: Routes.application_flow_path(socket, :applicant_profile, app_id)
+       )}
     else
       {:error, %Ecto.Changeset{} = cs} ->
         {:noreply, assign(socket, :changeset, cs)}
