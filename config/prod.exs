@@ -28,13 +28,12 @@ config :orig, Orig.Events.Application,
   event_store: [
     adapter: Commanded.EventStore.Adapters.EventStore,
     event_store: Orig.Events.EventStore,
-    serializer: Commanded.Serialization.JsonSerializer,
-    url: "${DATABASE_URL}"
+    serializer: Commanded.Serialization.JsonSerializer
   ]
 
 config :orig, Orig.Events.EventStore,
   serializer: Commanded.Serialization.JsonSerializer,
-  url: "${DATABASE_URL}"
+  url: "${PG_DATABASE_URL}"
 
 # Do not print debug messages in production
 config :logger, level: :info
