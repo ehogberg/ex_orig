@@ -57,7 +57,8 @@ defmodule Orig.MixProject do
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
       {:ecto_psql_extras, "~> 0.6"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
-      {:atomic_map, "~> 0.9.3"}
+      {:atomic_map, "~> 0.9.3"},
+      {:distillery, "~> 2.1"}
     ]
   end
 
