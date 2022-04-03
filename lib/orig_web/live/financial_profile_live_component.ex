@@ -6,6 +6,7 @@ defmodule OrigWeb.FinancialProfileLiveComponent do
   alias Orig.Originations.FinancialProfile
   alias Orig.Originations.FinancialProfile.PayPeriod
 
+  @impl true
   def update(assigns,socket) do
     {:ok,
       socket
@@ -26,11 +27,43 @@ defmodule OrigWeb.FinancialProfileLiveComponent do
     })
   end
 
+  @impl true
+  def handle_event("validate", %{"financial_profile" => attrs}, socket) do
+    cs = socket.assigns.financial_profile
+    |> Originations.change_financial_profile(attrs)
+    |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, :changeset, cs)}
+  end
+
+  @impl true
+  def handle_event("save", %{"financial_profile" => attrs}, socket) do
+    financial_profile = socket.assigns.financial_profile
+    state = Ecto.get_meta(financial_profile, :state)
+    attrs = Map.put(attrs, :app_id, socket.assigns.app_id)
+
+    case persist_financial_profile(financial_profile, attrs, state) do
+      {:ok, _financial_profile} ->
+        {:noreply, socket}
+      {:error, %Ecto.Changeset{} = cs} ->
+        {:noreply, assign(socket, :changeset, cs)}
+    end
+  end
+
+  defp persist_financial_profile(_, attrs, :built),
+    do: Originations.create_financial_profile(attrs)
+
+  defp persist_financial_profile(financial_profile, attrs, :loaded),
+    do: Originations.update_financial_profile(financial_profile, attrs)
+
+
+  @impl true
   def render(assigns) do
     ~H"""
     <section>
       <.page_header>Financial Profile</.page_header>
-      <.form let={f} for={@changeset} phx-target={@myself}>
+      <.form let={f} for={@changeset} phx-target={@myself}
+        phx-change="validate" phx-submit="save">
         <.text_entry f={f} field="periodic_income" />
         <.select f={f} field="pay_period" opts={PayPeriod.__enums__}/>
         <.text_entry f={f} field="primary_routing_number" />

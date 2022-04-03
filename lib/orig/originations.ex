@@ -140,8 +140,7 @@ defmodule Orig.Originations do
     persist_financial_profile(%FinancialProfile{}, attrs, "create")
   end
 
-  def update_financial_profile(%{app_id: app_id} = attrs) do
-    financial_profile = find_financial_profile_by_app_id(app_id)
+  def update_financial_profile(financial_profile, attrs) do
     persist_financial_profile(financial_profile, attrs, "update")
   end
 

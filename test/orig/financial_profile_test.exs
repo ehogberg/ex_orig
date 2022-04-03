@@ -53,7 +53,8 @@ defmodule Orig.Originations.FinancialProfileTest do
       financial_profile = financial_profile_fixture()
 
       assert {:ok, upd_fin_prof} =
-        Originations.update_financial_profile(%{
+        Originations.update_financial_profile(
+          financial_profile, %{
           app_id: financial_profile.app_id,
           periodic_income: 750,
           pay_period: :biweekly,
@@ -88,17 +89,22 @@ defmodule Orig.Originations.FinancialProfileTest do
     end
 
     test "change_financial_profile/2 rejects income less than 1" do
-      refute Originations.change_financial_profile(
+
+      cs = Originations.change_financial_profile(
         %FinancialProfile{},
-        %{ @valid_attrs | periodic_income: 0.75}
-      ).valid?
+        %{ @valid_attrs | periodic_income: 0.75
+        })
+
+      assert %{periodic_income: ["must be greater than 1"]} = errors_on(cs)
     end
 
     test "change_financial_profile/2 rejects invalid pay period" do
-      refute Originations.change_financial_profile(
+      cs = Originations.change_financial_profile(
         %FinancialProfile{},
-        %{ @valid_attrs | pay_period: :no_such_frequency}
-      ).valid?
+        %{ @valid_attrs | pay_period: :no_such_frequency
+        })
+
+      assert %{pay_period: ["is invalid"]} = errors_on(cs)
     end
   end
 end
