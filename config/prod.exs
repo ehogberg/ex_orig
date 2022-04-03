@@ -22,7 +22,7 @@ config :orig, Orig.Repo,
   url: "${DATABASE_URL}",
   database: "",
   ssl: true,
-  pool_size: 5
+  pool_size: 3
 
 config :orig, Orig.Events.Application,
   event_store: [
@@ -33,7 +33,8 @@ config :orig, Orig.Events.Application,
 
 config :orig, Orig.Events.EventStore,
   serializer: Commanded.Serialization.JsonSerializer,
-  url: "${PG_DATABASE_URL}"
+  url: "${PG_DATABASE_URL}",
+  pool_size: 3
 
 # Do not print debug messages in production
 config :logger, level: :info
