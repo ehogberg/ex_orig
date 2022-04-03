@@ -24,11 +24,17 @@ config :orig, Orig.Repo,
   ssl: true,
   pool_size: 5
 
+config :orig, Orig.Events.Application,
+  event_store: [
+    adapter: Commanded.EventStore.Adapters.EventStore,
+    event_store: Orig.Events.EventStore,
+    serializer: Commanded.Serialization.JsonSerializer,
+    url: "${DATABASE_URL}"
+  ]
+
 config :orig, Orig.Events.EventStore,
   serializer: Commanded.Serialization.JsonSerializer,
-  url: "${DATABASE_URL}",
-  ssl: true,
-  pool_size: 5
+  url: "${DATABASE_URL}"
 
 # Do not print debug messages in production
 config :logger, level: :info
