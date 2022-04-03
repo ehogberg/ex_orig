@@ -12,9 +12,11 @@ import Config
 config :orig, OrigWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
+  load_from_system_env: true,
+  http: [port: {:system, "PORT"}],
   secret_key_base: "${SECRET_KEY_BASE}",
   url: [host: "${APP_NAME}.gigalixir.com", port: 443],
-  version: Mix.Project.config[:version]
+  version: Mix.Project.config()[:version]
 
 
 config :orig, Orig.Repo,
