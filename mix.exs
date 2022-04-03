@@ -57,6 +57,7 @@ defmodule Orig.MixProject do
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
       {:ecto_psql_extras, "~> 0.6"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
+      {:atomic_map, "~> 0.9.3"}
     ]
   end
 
@@ -69,10 +70,15 @@ defmodule Orig.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs", "event_store.create"],
+      "ecto.setup": [
+        "ecto.create",
+        "ecto.migrate",
+        "run priv/repo/seeds.exs",
+        "event_store.create"
+      ],
       "ecto.reset": ["ecto.drop", "ecto.setup", "event_store.init", "event_store.migrate"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["tailwind default --minify","esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]
   end
 end

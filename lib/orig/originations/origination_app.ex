@@ -21,7 +21,7 @@ defmodule Orig.Originations.OriginationApp do
   }
 
   alias Orig.Originations.OriginationApp.AppStatus
-  alias Orig.Originations.ApplicantProfile
+  alias Orig.Originations.{ApplicantProfile, FinancialProfile}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -32,6 +32,7 @@ defmodule Orig.Originations.OriginationApp do
     timestamps(type: :naive_datetime_usec)
 
     has_one :applicant_profile, ApplicantProfile, references: :app_id, foreign_key: :app_id
+    has_one :financial_profile, FinancialProfile, references: :app_id, foreign_key: :app_id
   end
 
   @doc false

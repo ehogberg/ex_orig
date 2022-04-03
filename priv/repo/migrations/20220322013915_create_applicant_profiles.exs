@@ -2,7 +2,6 @@ defmodule Orig.Repo.Migrations.CreateApplicantProfiles do
   use Ecto.Migration
 
   def change do
-
     create table(:applicant_profiles, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :app_id, references(:origination_apps, column: :app_id, type: :uuid)

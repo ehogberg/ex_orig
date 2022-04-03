@@ -6,7 +6,7 @@ defmodule Orig.Originations do
   """
 
   alias Orig.Repo
-  alias Orig.Originations.{OriginationApp, ApplicantProfile}
+  alias Orig.Originations.{OriginationApp, ApplicantProfile, FinancialProfile}
   alias Orig.Events.OriginationApp.{RejectOriginationApp}
 
   @doc """
@@ -56,16 +56,8 @@ defmodule Orig.Originations do
   it is returned.  If none is found, creates a new orig application
   for the applicant and returns it.
   """
-  def find_or_create_origination_app(applicant_id) do
-    existing_app = get_origination_app_by_applicant_id(applicant_id)
-
-    if !existing_app do
-      %{ssn: applicant_id}
-      |> create_origination_app()
-      |> elem(1)
-    else
-      existing_app
-    end
+  def find_active_app_for_applicant(applicant_id) do
+    Repo.get_by(OriginationApp, ssn: applicant_id)
   end
 
   @doc """
@@ -120,21 +112,63 @@ defmodule Orig.Originations do
 
   defp persist_applicant_profile(
          %ApplicantProfile{} = app_profile,
-         %{app_id: app_id} = attrs,
+         attrs,
          persistence
        ) do
-    with {:ok, %ApplicantProfile{}} <-
+    with {:ok, %ApplicantProfile{app_id: app_id}} <-
            ApplicantProfile.validate_app_profile(app_profile, attrs),
          :ok <-
-           ApplicantProfile.dispatch_applicant_profile_persistence(attrs, persistence),
+           ApplicantProfile.dispatch_applicant_profile_persistence(
+             AtomicMap.convert(attrs),
+             persistence
+           ),
          ap <- find_applicant_profile_by_app_id(app_id) do
       {:ok, ap}
     else
-      {:error, _term} = err -> err
+      {:error, _term} = err ->
+        Logger.error("Problem while persisting applicant profile: #{inspect(err)}")
+        err
     end
   end
 
   def change_applicant_profile(%ApplicantProfile{} = applicant_profile, attrs \\ %{}) do
     ApplicantProfile.changeset(applicant_profile, attrs)
+  end
+
+  #### Financial Profile
+  def create_financial_profile(attrs) do
+    persist_financial_profile(%FinancialProfile{}, attrs, "create")
+  end
+
+  def update_financial_profile(%{app_id: app_id} = attrs) do
+    financial_profile = find_financial_profile_by_app_id(app_id)
+    persist_financial_profile(financial_profile, attrs, "update")
+  end
+
+  defp persist_financial_profile(financial_profile, attrs, persistence) do
+    with cs <- change_financial_profile(financial_profile, attrs),
+        {:ok, %FinancialProfile{app_id: app_id}} <-
+          Ecto.Changeset.apply_action(cs, :validate),
+        :ok <-
+          FinancialProfile.dispatch_financial_profile_persistence(
+            attrs,
+            persistence
+          ),
+        %FinancialProfile{} = new_financial_profile <-
+          find_financial_profile_by_app_id(app_id) do
+      {:ok, new_financial_profile}
+    end
+  end
+
+
+  def find_financial_profile_by_app_id(app_id),
+    do: Repo.get_by(FinancialProfile, app_id: app_id)
+
+  def list_financial_profiles() do
+    Repo.all(FinancialProfile)
+  end
+
+  def change_financial_profile(%FinancialProfile{} = financial_profile, attrs \\ %{}) do
+    FinancialProfile.changeset(financial_profile, attrs)
   end
 end

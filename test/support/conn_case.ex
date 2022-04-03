@@ -23,7 +23,7 @@ defmodule OrigWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import OrigWeb.ConnCase
-
+      import Phoenix.LiveViewTest
       alias OrigWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing

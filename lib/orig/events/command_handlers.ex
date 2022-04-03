@@ -8,9 +8,21 @@ defmodule Orig.Events.CommandHandlers do
     OriginationAppRejected
   }
 
-  alias Orig.Events.ApplicantProfile.{ChangeApplicantProfile, ApplicantProfileChanged}
+  alias Orig.Events.ApplicantProfile.{
+    ChangeApplicantProfile,
+    ApplicantProfileChanged
+  }
 
-  alias Orig.Originations.{OriginationApp, ApplicantProfile}
+  alias Orig.Events.FinancialProfile.{
+    ChangeFinancialProfile,
+    FinancialProfileChanged
+  }
+
+  alias Orig.Originations.{
+    OriginationApp,
+    ApplicantProfile,
+    FinancialProfile
+  }
 
   #### Create origination app...
 
@@ -73,4 +85,38 @@ defmodule Orig.Events.CommandHandlers do
       persistence: chg.persistence
     }
   end
+
+  #### Financial Profile
+
+  # create financial profile if one doesn't already exist
+  @impl true
+  def handle(%FinancialProfile{app_id: nil}, %ChangeFinancialProfile{persistence: "create"} = cmd) do
+    %FinancialProfileChanged{
+      financial_profile: cmd.financial_profile,
+      app_id: cmd.app_id,
+      persistence: "create"
+    }
+  end
+
+  # err when trying to create a financial profile that already exists
+  @impl true
+  def handle(%FinancialProfile{}, %ChangeFinancialProfile{persistence: "create"}),
+    do: {:error, :financial_profile_exists}
+
+
+  # err if updating a non-existant financial profile
+  @impl true
+  def handle(%FinancialProfile{app_id: nil}, %ChangeFinancialProfile{persistence: "update"}),
+    do: {:error, :financial_profile_not_found}
+
+  # update existing financial profile.
+  @impl true
+  def handle(%FinancialProfile{}, %ChangeFinancialProfile{persistence: "update"} = cmd) do
+    %FinancialProfileChanged{
+      financial_profile: cmd.financial_profile,
+      app_id: cmd.app_id,
+      persistence: "update"
+    }
+  end
+
 end

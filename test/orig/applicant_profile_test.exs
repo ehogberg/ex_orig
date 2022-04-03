@@ -4,6 +4,8 @@ defmodule Orig.ApplicantProfileTest do
 
   alias Orig.Originations
 
+  @moduletag capture_log: true
+
   describe "applicant profiles" do
     alias Orig.Originations.ApplicantProfile
 

@@ -10,7 +10,8 @@ defmodule Orig.Events.EventsSupervisor do
     children = [
       Orig.Events.Application,
       Orig.Events.OriginationApp.OriginationAppProjector,
-      Orig.Events.ApplicantProfile.ApplicantProfileProjector
+      Orig.Events.ApplicantProfile.ApplicantProfileProjector,
+      Orig.Events.FinancialProfile.FinancialProfileProjector
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -52,17 +52,18 @@ defmodule Orig.OriginationsTest do
       assert {:error, %Ecto.Changeset{}} = Originations.create_origination_app(@invalid_attrs)
     end
 
-    test "find_or_create_origination_app/1 returns an active application, if one exists" do
+    test "find_active_app_for_applicant/1 returns an active application, if one exists" do
       origination_app = origination_app_fixture()
 
-      assert origination_app == Originations.find_or_create_origination_app("111223333")
+      assert (%OriginationApp{} = found_app) =
+               Originations.find_active_app_for_applicant("111223333")
+
+      assert found_app.app_id == origination_app.app_id
     end
 
-    test "find_or_create_origination_app/1 creates a new application if
+    test "find_active_app_for_applicant/1 returns nil if
           there is no existing one matching applicant id" do
-      origination_app_fixture()
-      assert %OriginationApp{} = Originations.find_or_create_origination_app("222334444")
-      assert Enum.count(Originations.list_origination_apps()) == 2
+      assert nil == Originations.find_active_app_for_applicant("222334444")
     end
 
     test "reject_origination_app/1 rejects an active origination app" do

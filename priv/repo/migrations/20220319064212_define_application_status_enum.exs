@@ -3,6 +3,6 @@ defmodule Orig.Repo.Migrations.AddApplicationType do
   alias Orig.Originations.OriginationApp.AppStatus
 
   def change do
-    AppStatus.create_type
+    AppStatus.create_type()
   end
 end

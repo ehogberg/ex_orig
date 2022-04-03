@@ -1,6 +1,4 @@
 defmodule Orig.Originations.ApplicantProfile do
-  @derive {Jason.Encoder, except: [:__meta__, :origination_app]}
-
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -9,6 +7,18 @@ defmodule Orig.Originations.ApplicantProfile do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  @derive {Jason.Encoder,
+           only: [
+             :id,
+             :address1,
+             :address2,
+             :city,
+             :state,
+             :postcode,
+             :first_name,
+             :last_name,
+             :app_id
+           ]}
   schema "applicant_profiles" do
     field :address1, :string
     field :address2, :string
