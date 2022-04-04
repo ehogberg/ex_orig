@@ -16,7 +16,7 @@ config :orig, OrigWeb.Endpoint,
   http: [port: {:system, "PORT"}],
   secret_key_base: "${SECRET_KEY_BASE}",
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
-  url: [host: "${APP_NAME}.gigalixir.com", port: 443],
+  url: [host: "${APP_NAME}.gigalixirapp.com", port: 443],
   version: Mix.Project.config()[:version]
 
 
