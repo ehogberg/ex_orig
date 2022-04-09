@@ -35,6 +35,7 @@ config :orig, Orig.Events.Application,
 
 config :orig, Orig.Events.EventStore,
   url: "${PG_DATABASE_URL}",
+  schema: "events",
   pool_size: 3
 
 # Do not print debug messages in production
