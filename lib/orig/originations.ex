@@ -146,19 +146,18 @@ defmodule Orig.Originations do
 
   defp persist_financial_profile(financial_profile, attrs, persistence) do
     with cs <- change_financial_profile(financial_profile, attrs),
-        {:ok, %FinancialProfile{app_id: app_id}} <-
-          Ecto.Changeset.apply_action(cs, :validate),
-        :ok <-
-          FinancialProfile.dispatch_financial_profile_persistence(
-            attrs,
-            persistence
-          ),
-        %FinancialProfile{} = new_financial_profile <-
-          find_financial_profile_by_app_id(app_id) do
+         {:ok, %FinancialProfile{app_id: app_id}} <-
+           Ecto.Changeset.apply_action(cs, :validate),
+         :ok <-
+           FinancialProfile.dispatch_financial_profile_persistence(
+             AtomicMap.convert(attrs),
+             persistence
+           ),
+         %FinancialProfile{} = new_financial_profile <-
+           find_financial_profile_by_app_id(app_id) do
       {:ok, new_financial_profile}
     end
   end
-
 
   def find_financial_profile_by_app_id(app_id),
     do: Repo.get_by(FinancialProfile, app_id: app_id)

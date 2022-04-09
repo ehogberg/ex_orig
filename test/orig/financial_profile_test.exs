@@ -29,7 +29,7 @@ defmodule Orig.Originations.FinancialProfileTest do
       origination_app_fixture()
 
       assert {:ok, %FinancialProfile{} = new_fin_prof} =
-        Originations.create_financial_profile(@valid_attrs)
+               Originations.create_financial_profile(@valid_attrs)
 
       assert new_fin_prof.app_id == "7488a646-e31f-11e4-aace-600308960662"
       assert new_fin_prof.periodic_income == 2250
@@ -42,7 +42,7 @@ defmodule Orig.Originations.FinancialProfileTest do
       _financial_profile = financial_profile_fixture()
 
       assert Originations.create_financial_profile(@valid_attrs) ==
-        {:error, :financial_profile_exists}
+               {:error, :financial_profile_exists}
     end
 
     test "create_financial_profile/1 errs when given invalid input" do
@@ -53,19 +53,21 @@ defmodule Orig.Originations.FinancialProfileTest do
       financial_profile = financial_profile_fixture()
 
       assert {:ok, upd_fin_prof} =
-        Originations.update_financial_profile(
-          financial_profile, %{
-          app_id: financial_profile.app_id,
-          periodic_income: 750,
-          pay_period: :biweekly,
-          primary_routing_number: "999888654",
-          primary_account_number: "4445556677890"
-        })
+               Originations.update_financial_profile(
+                 financial_profile,
+                 %{
+                   app_id: financial_profile.app_id,
+                   periodic_income: 750,
+                   pay_period: :biweekly,
+                   primary_routing_number: "999888654",
+                   primary_account_number: "4445556677890"
+                 }
+               )
 
-        assert upd_fin_prof.periodic_income == 750
-        assert upd_fin_prof.pay_period == :biweekly
-        assert upd_fin_prof.primary_routing_number == "999888654"
-        assert upd_fin_prof.primary_account_number == "4445556677890"
+      assert upd_fin_prof.periodic_income == 750
+      assert upd_fin_prof.pay_period == :biweekly
+      assert upd_fin_prof.primary_routing_number == "999888654"
+      assert upd_fin_prof.primary_account_number == "4445556677890"
     end
 
     test "list_financial_profiles/0 returns all financial profiles" do
@@ -77,7 +79,7 @@ defmodule Orig.Originations.FinancialProfileTest do
       financial_profile = financial_profile_fixture()
 
       assert Originations.find_financial_profile_by_app_id(financial_profile.app_id) ==
-        financial_profile
+               financial_profile
     end
 
     test "find_financial_profile_by_app_id/1 returns nil if no matching profile" do
@@ -89,20 +91,31 @@ defmodule Orig.Originations.FinancialProfileTest do
     end
 
     test "change_financial_profile/2 rejects income less than 1" do
-
-      cs = Originations.change_financial_profile(
-        %FinancialProfile{},
-        %{ @valid_attrs | periodic_income: 0.75
-        })
+      cs =
+        Originations.change_financial_profile(
+          %FinancialProfile{},
+          %{@valid_attrs | periodic_income: 0.75}
+        )
 
       assert %{periodic_income: ["must be greater than 1"]} = errors_on(cs)
     end
 
+    test "change_financial_profile/2 rejects non-numeric income" do
+      cs =
+        Originations.change_financial_profile(
+          %FinancialProfile{},
+          %{@valid_attrs | periodic_income: "not a number"}
+        )
+
+      assert %{periodic_income: ["is invalid"]} = errors_on(cs)
+    end
+
     test "change_financial_profile/2 rejects invalid pay period" do
-      cs = Originations.change_financial_profile(
-        %FinancialProfile{},
-        %{ @valid_attrs | pay_period: :no_such_frequency
-        })
+      cs =
+        Originations.change_financial_profile(
+          %FinancialProfile{},
+          %{@valid_attrs | pay_period: :no_such_frequency}
+        )
 
       assert %{pay_period: ["is invalid"]} = errors_on(cs)
     end

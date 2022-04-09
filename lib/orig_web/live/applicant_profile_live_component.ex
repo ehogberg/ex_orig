@@ -47,9 +47,11 @@ defmodule OrigWeb.ApplicantProfileLiveComponent do
 
     case persist_applicant_profile(applicant_profile, attrs_with_app_id, applicant_profile_state) do
       {:ok, %ApplicantProfile{}} ->
-        {:noreply, push_redirect(socket,
-          to: Routes.application_flow_path(socket, :financial_profile, socket.assigns.app_id))
-        }
+        {:noreply,
+         push_redirect(socket,
+           to: Routes.application_flow_path(socket, :financial_profile, socket.assigns.app_id)
+         )}
+
       {:error, cs} ->
         {:noreply, assign(socket, :changeset, cs)}
     end

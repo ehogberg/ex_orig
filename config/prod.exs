@@ -19,7 +19,6 @@ config :orig, OrigWeb.Endpoint,
   url: [host: "${APP_NAME}.gigalixirapp.com", port: 443],
   version: Mix.Project.config()[:version]
 
-
 config :orig, Orig.Repo,
   adapter: Ecto.Adapter.Postgres,
   url: "${DATABASE_URL}",
@@ -35,7 +34,6 @@ config :orig, Orig.Events.Application,
   ]
 
 config :orig, Orig.Events.EventStore,
-  serializer: Commanded.Serialization.JsonSerializer,
   url: "${PG_DATABASE_URL}",
   pool_size: 3
 

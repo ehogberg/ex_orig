@@ -4,9 +4,9 @@ defmodule OrigWeb.ApplicationFlowLive do
   @impl true
   def mount(params, _sess, socket) do
     {:ok,
-      socket
-      |> assign_application_id(params["app_id"])
-      |> assign_screen_flow(socket.assigns.live_action)}
+     socket
+     |> assign_application_id(params["app_id"])
+     |> assign_screen_flow(socket.assigns.live_action)}
   end
 
   defp assign_application_id(socket, app_id) do
@@ -20,10 +20,9 @@ defmodule OrigWeb.ApplicationFlowLive do
 
   defp screen_flow(step) do
     %{
-      applicant_profile:
-        {OrigWeb.ApplicantProfileLiveComponent,"applicant_profile"},
-      financial_profile:
-        {OrigWeb.FinancialProfileLiveComponent, "financial_profile"}
+      applicant_profile: {OrigWeb.ApplicantProfileLiveComponent, "applicant_profile"},
+      financial_profile: {OrigWeb.FinancialProfileLiveComponent, "financial_profile"},
+      application_review: {OrigWeb.ApplicationReviewLiveComponent, "application_review"}
     }
     |> Map.get(step)
   end
@@ -34,5 +33,4 @@ defmodule OrigWeb.ApplicationFlowLive do
     <.live_component module={@module} id={@component_id}, app_id={@app_id} </>
     """
   end
-
 end

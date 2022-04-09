@@ -17,13 +17,7 @@ config :orig, Orig.Events.Application,
     serializer: Commanded.Serialization.JsonSerializer
   ]
 
-config :orig, Orig.Events.EventStore,
-  serializer: Commanded.Serialization.JsonSerializer,
-  username: "postgres",
-  password: "postgres",
-  database: "orig_dev",
-  hostname: "localhost",
-  pool_size: 10
+
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

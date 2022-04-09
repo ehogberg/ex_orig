@@ -103,7 +103,6 @@ defmodule Orig.Events.CommandHandlers do
   def handle(%FinancialProfile{}, %ChangeFinancialProfile{persistence: "create"}),
     do: {:error, :financial_profile_exists}
 
-
   # err if updating a non-existant financial profile
   @impl true
   def handle(%FinancialProfile{app_id: nil}, %ChangeFinancialProfile{persistence: "update"}),
@@ -118,5 +117,4 @@ defmodule Orig.Events.CommandHandlers do
       persistence: "update"
     }
   end
-
 end

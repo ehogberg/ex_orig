@@ -1,9 +1,9 @@
 defmodule Orig.Events.FinancialProfile.FinancialProfileProjector do
   use Commanded.Projections.Ecto,
-  application: Orig.Events.Application,
-  repo: Orig.Repo,
-  name: "financial_profile",
-  consistency: :strong
+    application: Orig.Events.Application,
+    repo: Orig.Repo,
+    name: "financial_profile",
+    consistency: :strong
 
   alias Orig.Events.FinancialProfile.FinancialProfileChanged
   alias Orig.Originations.FinancialProfile

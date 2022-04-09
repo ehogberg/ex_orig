@@ -65,8 +65,8 @@ defmodule OrigWeb.ApplyLive do
          %OriginationApp{app_id: app_id} <-
            find_or_create_origination_app(ssn) do
       {:noreply,
-        push_redirect(socket,
-          to: Routes.application_flow_path(socket, :applicant_profile, app_id)
+       push_redirect(socket,
+         to: Routes.application_flow_path(socket, :applicant_profile, app_id)
        )}
     else
       {:error, %Ecto.Changeset{} = cs} ->

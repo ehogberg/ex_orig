@@ -7,11 +7,11 @@ defmodule OrigWeb.FinancialProfileLiveComponent do
   alias Orig.Originations.FinancialProfile.PayPeriod
 
   @impl true
-  def update(assigns,socket) do
+  def update(assigns, socket) do
     {:ok,
-      socket
-      |> assign(assigns)
-      |> assign_financial_profile_and_changeset(assigns.app_id)}
+     socket
+     |> assign(assigns)
+     |> assign_financial_profile_and_changeset(assigns.app_id)}
   end
 
   defp assign_financial_profile_and_changeset(socket, app_id) do
@@ -29,9 +29,10 @@ defmodule OrigWeb.FinancialProfileLiveComponent do
 
   @impl true
   def handle_event("validate", %{"financial_profile" => attrs}, socket) do
-    cs = socket.assigns.financial_profile
-    |> Originations.change_financial_profile(attrs)
-    |> Map.put(:action, :validate)
+    cs =
+      socket.assigns.financial_profile
+      |> Originations.change_financial_profile(attrs)
+      |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, cs)}
   end
@@ -40,11 +41,15 @@ defmodule OrigWeb.FinancialProfileLiveComponent do
   def handle_event("save", %{"financial_profile" => attrs}, socket) do
     financial_profile = socket.assigns.financial_profile
     state = Ecto.get_meta(financial_profile, :state)
-    attrs = Map.put(attrs, :app_id, socket.assigns.app_id)
+    attrs = Map.put(attrs, "app_id", socket.assigns.app_id)
 
     case persist_financial_profile(financial_profile, attrs, state) do
       {:ok, _financial_profile} ->
-        {:noreply, socket}
+        {:noreply,
+         push_redirect(socket,
+           to: Routes.application_flow_path(socket, :application_review, socket.assigns.app_id)
+         )}
+
       {:error, %Ecto.Changeset{} = cs} ->
         {:noreply, assign(socket, :changeset, cs)}
     end
@@ -55,7 +60,6 @@ defmodule OrigWeb.FinancialProfileLiveComponent do
 
   defp persist_financial_profile(financial_profile, attrs, :loaded),
     do: Originations.update_financial_profile(financial_profile, attrs)
-
 
   @impl true
   def render(assigns) do
@@ -68,6 +72,8 @@ defmodule OrigWeb.FinancialProfileLiveComponent do
         <.select f={f} field="pay_period" opts={PayPeriod.__enums__}/>
         <.text_entry f={f} field="primary_routing_number" />
         <.text_entry f={f} field="primary_account_number" />
+        <%= submit "Save Financial Profile Information",
+          class: "btn btn-blue" %>
       </.form>
     </section>
     """

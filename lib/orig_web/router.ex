@@ -22,6 +22,7 @@ defmodule OrigWeb.Router do
     live "/apply", ApplyLive
     live "/apply/:app_id/applicant", ApplicationFlowLive, :applicant_profile
     live "/apply/:app_id/financial", ApplicationFlowLive, :financial_profile
+    live "/apply/:app_id/review", ApplicationFlowLive, :application_review
   end
 
   # Other scopes may use custom stacks.

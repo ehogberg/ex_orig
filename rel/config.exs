@@ -51,5 +51,9 @@ release :orig do
   set applications: [
     :runtime_tools
   ]
+  set commands: [
+    event_store_create: "rel/commands/event_store_create.sh",
+    event_store_init: "rel/commands/event_store_init.sh",
+    event_store_drop: "rel/commands/event_store_drop.sh"
+  ]
 end
-
