@@ -18,17 +18,6 @@ config :orig, OrigWeb.Endpoint,
   pubsub_server: Orig.PubSub,
   live_view: [signing_salt: "QqLA2dOX"]
 
-# EventStore
-config :orig, Orig.Events.EventStore,
-  serializer: EventStore.JsonbSerializer,
-  username: "postgres",
-  password: "postgres",
-  database: "orig_dev",
-  hostname: "localhost",
-  pool_size: 10,
-  column_data_type: "jsonb",
-  types: EventStore.PostgresTypes
-
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

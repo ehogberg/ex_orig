@@ -2,10 +2,10 @@ import Config
 
 # Configure your database
 config :orig, Orig.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "orig_dev",
+  username: System.get_env("DATABASE_USER") || "postgres",
+  password: System.get_env("DATABASE_PASS") || "postgres",
+  hostname: System.get_env("DATABASE_HOST") || "localhost",
+  database: System.get_env("DATABASE_NAME") || "orig_dev",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
@@ -17,7 +17,16 @@ config :orig, Orig.Events.Application,
     serializer: Commanded.Serialization.JsonSerializer
   ]
 
-
+# EventStore
+config :orig, Orig.Events.EventStore,
+  serializer: EventStore.JsonbSerializer,
+  username: System.get_env("DATABASE_USER") || "postgres",
+  password: System.get_env("DATABASE_PASS") || "postgres",
+  database: System.get_env("DATABASE_NAME") || "orig_dev",
+  hostname: System.get_env("DATABASE_HOST") || "localhost",
+  pool_size: 10,
+  column_data_type: "jsonb",
+  types: EventStore.PostgresTypes
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -28,7 +37,8 @@ config :orig, Orig.Events.Application,
 config :orig, OrigWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  #http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {0,0,0,0}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
