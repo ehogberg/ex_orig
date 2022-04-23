@@ -72,7 +72,7 @@ defmodule OrigWeb.FinancialProfileLiveComponent do
         <.select f={f} field="pay_period" opts={PayPeriod.__enums__}/>
         <.text_entry f={f} field="primary_routing_number" />
         <.text_entry f={f} field="primary_account_number" />
-        <.form_submit disabled={!(@changeset.valid?)}>Save Financial Profile Information</.form_submit>
+        <.form_submit>Save Financial Profile Information</.form_submit>
       </.form>
     </section>
     """
