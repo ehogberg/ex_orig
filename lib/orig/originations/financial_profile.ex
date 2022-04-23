@@ -23,7 +23,7 @@ defmodule Orig.Originations.FinancialProfile do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "financial_profiles" do
-    field :periodic_income, :float
+    field :periodic_income, :integer
     field :pay_period, PayPeriod
     field :primary_routing_number, :string
     field :primary_account_number, :string
