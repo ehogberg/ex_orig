@@ -77,8 +77,7 @@ defmodule OrigWeb.ApplicantProfileLiveComponent do
         <.text_entry f={f} field="city" />
         <.text_entry f={f} field="state" />
         <.text_entry f={f} field="postcode" />
-        <%= submit "Save Applicant Profile Information",
-          class: "btn btn-blue" %>
+        <.form_submit>Save Applicant Profile Information</.form_submit>
       </.form>
     </section>
     """
