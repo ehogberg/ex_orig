@@ -21,7 +21,7 @@ defmodule Orig.MixProject do
   def application do
     [
       mod: {Orig.Application, []},
-      extra_applications: [:logger, :runtime_tools, :crypto]
+      extra_applications: [:logger, :runtime_tools, :crypto, :os_mon]
     ]
   end
 
