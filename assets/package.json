@@ -3,6 +3,6 @@
     "deploy": "cd .. && mix assets.deploy && rm -f _build/esbuild"
   },
   "dependencies": {
-    "alpinejs": "^3.9.5"
+    "alpinejs": "^3.10.2"
   }
 }
