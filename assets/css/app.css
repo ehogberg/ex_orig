@@ -3,19 +3,6 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
-.btn {
-  @apply font-bold py-2 px-4 rounded;
-}
-.btn-blue {
-  @apply bg-blue-500 text-white;
-}
-.btn-blue:hover {
-  @apply bg-blue-700;
-}
-
-.btn-blue:disabled {
-  @apply bg-gray-300;
-}
 
 /* Alerts and form errors used by phx.new */
 .alert {
@@ -45,13 +32,19 @@
 .alert:empty {
   display: none;
 }
-.invalid-feedback {
+.old-invalid-feedback {
   color: #a94442;
   display: block;
   margin: -1rem 0 2rem;
 }
 
+
 /* LiveView specific classes for your customization */
+.invalid-feedback {
+  color: #a94442;
+  margin: -1rem 0 2rem 1rem;
+}
+
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {
   display: none;

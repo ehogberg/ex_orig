@@ -3,6 +3,7 @@ defmodule OrigWeb.ApplyLive do
   alias Orig.Originations
   alias Orig.Originations.OriginationApp
   alias Ecto.Changeset
+  import OrigWeb.Views.PageHelpers
 
   @impl true
   def mount(_params, _sess, socket) do
@@ -32,16 +33,9 @@ defmodule OrigWeb.ApplyLive do
 
     <.form let={f} id="lookup-form" for={@changeset} phx-change="validate"
       phx-submit="lookup-app" as="lookup">
-      <div class="mb-4">
-        <%= text_input f, :ssn %>
-        <div class="mt-5">
-          <%= error_tag f, :ssn  %>
-        </div>
-      </div>
+      <.text_entry f={f} field="ssn" />
 
-      <%= submit "Start/Continue Application",
-        disabled: !(@changeset.valid?),
-        class: "btn btn-blue" %>
+      <.form_submit disabled={!(@changeset.valid?)}>Start/Continue Application</.form_submit>
     </.form>
     """
   end
