@@ -2,8 +2,31 @@ defmodule OrigWeb.Views.PageHelpers do
   use OrigWeb, :component
 
   def page_header(assigns) do
+
+    class = "bold text-2xl text-emerald-900 mb-5 " <>
+      Map.get(assigns, :class, "")
+    attribs = assigns_to_attributes(assigns, [:class])
+
+    assigns = assigns
+    |> assign(:attribs, attribs)
+    |> assign(:class, class)
+
     ~H"""
-    <h1 class="bold text-2xl text-emerald-900 mb-5"><%= render_slot(@inner_block) %></h1>
+    <h1 class={@class} {@attribs}><%= render_slot(@inner_block)%></h1>
+    """
+  end
+
+  def section_header(assigns) do
+    class = "bold text-xl text-emerald-500 mb-5 " <>
+      Map.get(assigns, :class, "")
+    attribs = assigns_to_attributes(assigns, [:class])
+
+    assigns = assigns
+    |> assign(:attribs, attribs)
+    |> assign(:class, class)
+
+    ~H"""
+    <h2 class={@class} {@attribs}><%= render_slot(@inner_block) %></h2>
     """
   end
 
@@ -47,4 +70,27 @@ defmodule OrigWeb.Views.PageHelpers do
         value={render_slot(@inner_block)} {@attribs} />
     """
   end
+
+  def page_text(assigns) do
+    class = "mb-5 " <> Map.get(assigns, :class, "")
+    attribs = assigns_to_attributes(assigns, [:class])
+
+    assigns = assigns
+    |> assign(:attribs, attribs)
+    |> assign(:class, class)
+
+    ~H"""
+    <p class={@class} {@attribs}><%= render_slot(@inner_block) %></p>
+    """
+  end
+
+  def summary_text_line(assigns) do
+    ~H"""
+    <div class="mb-2">
+      <span class="inline-block align-top font-bold w-40"><%= @label %></span>
+      <span class="inline-block"><%= render_slot(@inner_block) %></span>
+    </div>
+    """
+  end
+
 end
