@@ -90,11 +90,11 @@ defmodule Orig.Originations.FinancialProfileTest do
       assert Originations.change_financial_profile(%FinancialProfile{}, @valid_attrs).valid?
     end
 
-    test "change_financial_profile/2 rejects income less than 1" do
+    test "change_financial_profile/2 rejects income less than 2" do
       cs =
         Originations.change_financial_profile(
           %FinancialProfile{},
-          %{@valid_attrs | periodic_income: 0.75}
+          %{@valid_attrs | periodic_income: 1}
         )
 
       assert %{periodic_income: ["must be greater than 1"]} = errors_on(cs)

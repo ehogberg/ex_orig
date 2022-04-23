@@ -61,6 +61,17 @@ defmodule Orig.Originations do
   end
 
   @doc """
+  Given an application id, returns the application, with all child data
+  preloaded
+  """
+  def find_full_origination_app(app_id) do
+    app_id
+    |> find_origination_app_by_app_id()
+    |> Repo.preload(:applicant_profile)
+    |> Repo.preload(:financial_profile)
+  end
+
+  @doc """
   Given an app ID, marks an origination application as rejected,
   assuming one exists.  If no app exists or the app has
   previously been rejected, returns an {:error, err_term}

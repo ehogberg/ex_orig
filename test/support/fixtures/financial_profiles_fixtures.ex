@@ -8,7 +8,7 @@ defmodule Orig.FinancialProfilesFixtures do
       attrs
       |> Enum.into(%{
         app_id: origination_app.app_id,
-        periodic_income: 1000.00,
+        periodic_income: 1000,
         pay_period: :biweekly,
         primary_routing_number: "1112223334",
         primary_account_number: "8887776655432"
