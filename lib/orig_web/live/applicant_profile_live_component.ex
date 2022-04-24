@@ -1,4 +1,8 @@
 defmodule OrigWeb.ApplicantProfileLiveComponent do
+  @moduledoc """
+  Live component providing editing/persistence for the applicant personal
+  information profile portion of an origination application.
+  """
   use OrigWeb, :live_component
   import OrigWeb.Views.PageHelpers
   require Logger

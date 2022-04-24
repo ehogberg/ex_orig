@@ -1,5 +1,4 @@
 defmodule Orig.DistilleryTasks do
-
   alias EventStore.Tasks.{Drop, Create, Init}
 
   def event_store_create(args) do
@@ -19,6 +18,7 @@ defmodule Orig.DistilleryTasks do
     {:ok, _} = Application.ensure_all_started(:ssl)
 
     config = EventStore.Config.parsed(Orig.Events.EventStore, :orig)
+
     case cmd do
       :create -> Create.exec(config)
       :drop -> Drop.exec(config)

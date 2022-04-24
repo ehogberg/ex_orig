@@ -1,4 +1,11 @@
 defmodule OrigWeb.ApplyLive do
+  @moduledoc """
+  Entry page for loan application definition/editing.   Prompts for an
+  SSN-like identifier, attempts to locate an active application for that
+  identifier.  If one found, redirects the user to edit the current
+  application; otherwise, creates a new application and directs the user into
+  editing it.
+  """
   use OrigWeb, :live_view
   alias Orig.Originations
   alias Orig.Originations.OriginationApp

@@ -1,4 +1,8 @@
 defmodule OrigWeb.FinancialProfileLiveComponent do
+  @moduledoc """
+  Live component handling editing/persistence of financial information for a
+  origination application.
+  """
   use OrigWeb, :live_component
   import OrigWeb.Views.PageHelpers
 

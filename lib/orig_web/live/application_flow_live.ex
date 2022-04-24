@@ -1,4 +1,10 @@
 defmodule OrigWeb.ApplicationFlowLive do
+  @moduledoc """
+  Container live view hosting the various editing pages used to define a orig.
+  application.  Pulls the live action supplied as part of the redirect to this
+  page and renders the live component responsible for that portion of the
+  editing flow.
+  """
   use OrigWeb, :live_view
 
   @impl true

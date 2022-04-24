@@ -2,14 +2,16 @@ defmodule OrigWeb.Views.PageHelpers do
   use OrigWeb, :component
 
   def page_header(assigns) do
+    class =
+      "bold text-2xl text-emerald-900 mb-5 " <>
+        Map.get(assigns, :class, "")
 
-    class = "bold text-2xl text-emerald-900 mb-5 " <>
-      Map.get(assigns, :class, "")
     attribs = assigns_to_attributes(assigns, [:class])
 
-    assigns = assigns
-    |> assign(:attribs, attribs)
-    |> assign(:class, class)
+    assigns =
+      assigns
+      |> assign(:attribs, attribs)
+      |> assign(:class, class)
 
     ~H"""
     <h1 class={@class} {@attribs}><%= render_slot(@inner_block)%></h1>
@@ -17,13 +19,16 @@ defmodule OrigWeb.Views.PageHelpers do
   end
 
   def section_header(assigns) do
-    class = "bold text-xl text-emerald-500 mb-5 " <>
-      Map.get(assigns, :class, "")
+    class =
+      "bold text-xl text-emerald-500 mb-5 " <>
+        Map.get(assigns, :class, "")
+
     attribs = assigns_to_attributes(assigns, [:class])
 
-    assigns = assigns
-    |> assign(:attribs, attribs)
-    |> assign(:class, class)
+    assigns =
+      assigns
+      |> assign(:attribs, attribs)
+      |> assign(:class, class)
 
     ~H"""
     <h2 class={@class} {@attribs}><%= render_slot(@inner_block) %></h2>
@@ -57,13 +62,15 @@ defmodule OrigWeb.Views.PageHelpers do
   def form_submit(assigns) do
     attribs = assigns_to_attributes(assigns, [:class])
 
-    class = "font-bold py-2 px-4 rounded bg-emerald-500 text-white " <>
-      "disabled:bg-gray-300 hover:bg-emerald-700 " <>
-      Map.get(assigns, :class, "")
+    class =
+      "font-bold py-2 px-4 rounded bg-emerald-500 text-white " <>
+        "disabled:bg-gray-300 hover:bg-emerald-700 " <>
+        Map.get(assigns, :class, "")
 
-    assigns = assigns
-    |> assign(:attribs, attribs)
-    |> assign(:class, class)
+    assigns =
+      assigns
+      |> assign(:attribs, attribs)
+      |> assign(:class, class)
 
     ~H"""
       <input type="submit" class={@class}
@@ -75,9 +82,10 @@ defmodule OrigWeb.Views.PageHelpers do
     class = "mb-5 " <> Map.get(assigns, :class, "")
     attribs = assigns_to_attributes(assigns, [:class])
 
-    assigns = assigns
-    |> assign(:attribs, attribs)
-    |> assign(:class, class)
+    assigns =
+      assigns
+      |> assign(:attribs, attribs)
+      |> assign(:class, class)
 
     ~H"""
     <p class={@class} {@attribs}><%= render_slot(@inner_block) %></p>
@@ -92,5 +100,4 @@ defmodule OrigWeb.Views.PageHelpers do
     </div>
     """
   end
-
 end
