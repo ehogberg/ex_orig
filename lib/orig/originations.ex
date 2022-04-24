@@ -121,6 +121,12 @@ defmodule Orig.Originations do
     persist_applicant_profile(app_profile, attrs, "update")
   end
 
+
+  # Validates applicant profile against its default changeset, then triggers a
+  # CQRS persistence command to either create a new or update an existing
+  # applicant profile, awaiting the read projection of the change.  Once read
+  # projection is complete, returns the newly created/updated schema object
+  # to the caller.
   defp persist_applicant_profile(
          %ApplicantProfile{} = app_profile,
          attrs,
